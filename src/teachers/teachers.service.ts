@@ -1,21 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/service.prisma';
+import { CreateTeachersDto } from './teachers.dto';
 
 @Injectable()
 export class TeachersService {
+  constructor(private readonly prisma: PrismaService) {}
+
   findAll() {
-    return [
-      {
-        Код_преподавателя: '1',
-        Фамилия: 'Козлов',
-        Имя: 'Александр',
-        Отчество: 'Александрович',
-      },
-      {
-        Код_преподавателя: '2',
-        Фамилия: 'Скоромник',
-        Имя: 'Оксана',
-        Отчество: 'Валерьевна',
-      },
-    ];
+    return this.prisma.teachers.findMany();
+  }
+
+  create(dto: CreateTeachersDto) {
+    //TODO: fix new ID
+    return this.prisma.teachers.create({
+      data: dto,
+    });
   }
 }
