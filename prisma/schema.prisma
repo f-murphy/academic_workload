@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Activities {
+  ID                        Int        @id(map: "pk__код_предмета") @default(autoincrement())
+  Name                      String?    @db.VarChar(50)
+  Number_of_lecture_hours   Int?
+  Number_of_practical_hours Int?
+  Workload                  Workload[]
+}
+
+model Groups {
+  ID       Int        @id(map: "pk__код_группы") @default(autoincrement())
+  Name     String?    @db.VarChar(50)
+  Workload Workload[]
+}
+
+model Teachers {
+  ID              Int       @id(map: "pk__код_преподавателя") @default(autoincrement())
+  Surname         String?   @db.VarChar(50)
+  FirstName       String?   @db.VarChar(50)
+  MiddleName      String?   @db.VarChar(50)
+  Academic_degree String?   @db.VarChar(50)
+  JobTitle        String?   @db.VarChar(50)
+  Experience      Int?
+  Workload        Workload?
+}
+
+model Workload {
+  ID            Int         @id @default(autoincrement())
+  Discipline_id Int?
+  Group_number  Int?
+  Year          Int?
+  Activity_type String?     @db.VarChar(8)
+  Hours_amount  Int?
+  Bid           Int?
+  Group_id      Int?
+  Groups        Groups?     @relation(fields: [Group_id], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "fk__нагрузка_группы")
+  Activities    Activities? @relation(fields: [Discipline_id], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "fk__нагрузка_предметы")
+  Teachers      Teachers    @relation(fields: [ID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "fk__нагрузка_преподаватели")
+}

@@ -1,6 +1,18 @@
-import { Controller, Get, Param, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { LoggingInterceptor } from 'src/conception/interceptor';
+import { AuthGuard } from 'src/conception/guard';
+import { CreateTeachersDto } from './teachers.dto';
 
 @Controller('teachers')
 export class TeachersController {
@@ -21,5 +33,12 @@ export class TeachersController {
     console.log(params.id);
 
     return this.teachersService.findAll();
+  }
+
+  @Post()
+  @UsePipes(new ValidationPipe())
+  @UseGuards(AuthGuard)
+  create(@Body() dto: CreateTeachersDto) {
+    return this.teachersService.create(dto);
   }
 }
